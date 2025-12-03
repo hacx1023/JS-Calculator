@@ -11,39 +11,36 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # Step 1: Checkout repo
     - name: Checkout code
       uses: actions/checkout@v3
 
-    # Step 2: Install Node.js (to run JS checks)
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
         node-version: 18
 
-    # Step 3: Install HTML/CSS/JS linters
     - name: Install linters
       run: |
         npm install -g htmlhint
-        npm install -g stylelint
+        npm install -g stylelint stylelint-config-recommended
         npm install -g eslint
 
-    # Step 4: Validate HTML
+    - name: Create stylelint config
+      run: |
+        echo '{ "extends": "stylelint-config-recommended" }' > .stylelintrc.json
+
     - name: Validate HTML files
       run: |
         htmlhint "**/*.html"
 
-    # Step 5: Validate CSS
     - name: Validate CSS files
       run: |
-        stylelint "**/*.css" --allow-empty-input
+        stylelint "**/*.css"
 
-    # Step 6: Validate JavaScript syntax
     - name: Validate JS syntax
       run: |
         eslint "**/*.js" || echo "JS warnings only"
 
-    # Step 7: Run JavaScript test (your script.js)
-    - name: Run script.js test
+    - name: Run JS test
       run: |
-        node -e "console.log('JS Loaded Successfully!');"
+        node -e "console.log('JS Loaded Successfully!')"
